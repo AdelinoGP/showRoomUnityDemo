@@ -32,7 +32,30 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
+}
+
+.button {
+  border: solid 1px black;
+  padding: 5px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.select {
+  border: solid 1px black;
+  padding: 5px;
+  text-align: center;
+}
+
+.flex {
+  width: 100%;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  align-items: center;
 }
