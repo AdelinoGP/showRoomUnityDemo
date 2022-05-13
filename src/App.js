@@ -1,14 +1,23 @@
-import React from 'react';
+import React, { useState } from 'react';
+import Axios from "axios";
 import './App.css';
 //import CarDemo from './carDemo';
 
 function App() {
+  const [carName, setCarName] = useState("");
+
+  const submitCarName = () => {
+    Axios.post("http://localhost:3001/api/insert", {
+      carName: carName
+    }).then(() => { alert("successful insert"); });
+  };
+
   return (
     <div className="App">
       <h1> ShowRoom </h1>
       <div>
         <p></p>
-        {/* <input type="file" onChange = {CarDemo.loadImage(this)} ></input> */}
+        {/* <input type="file" onChange = {CarDemo.loadImage(this)}/>*/}
         <section className="flex">
           <div className="button" /*onclick="changeCamera(0)"*/>Camera 1</div>
           <div className="button" /*onclick="changeCamera(1)"*/>Camera 2</div>
@@ -16,8 +25,8 @@ function App() {
           <div className="button" /*onclick="changeCamera(3)"*/>Camera 4</div>
         </section>
         <section className="flex">
-          <div className="button" /*onclick="carro.changeOwnerName(document.getElementById('nomeOwner').value)"*/>Mudar Nome do Dono</div>
-          {/* <input className="select" type="text" name="Nome do Dono" id="nomeOwner" placeholder="Nome do Dono"> </input> */}
+          <div className="button" onClick={(e) => { submitCarName() }}>Mudar Nome do Dono</div>
+          <input type="text" className="select"  name="ownerName"  onChange={(e) => { setCarName(e.target.value); }}/>
           <div className="button" /*onclick="carro.changePaintColor(document.getElementById('paintColor').value)"*/>Mudar Pintura</div>
           {/* <input type="color" name="Cor Da Pintura" id="paintColor"></input> */}
           <div className="button" /*onclick="carro.changeWheelColor(document.getElementById('wheelColor').value )"*/>Mudar Cor da Roda</div>
