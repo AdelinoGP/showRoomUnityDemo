@@ -18,14 +18,24 @@ app.use(bodyParser.urlencoded({ extended: true }))
 
 app.post("/api/insert", (req, res) => {
 
-    const ownerName = req.body.carName
+    const ownerName = req.body.ownerName
+    const wheelColor = req.body.wheelColor
+    const paintColor = req.body.paintColor
+    const interior = req.body.interior
+    const seat = req.body.seat
 
-    const sqlInsert = "INSERT INTO carlist(ownerName, wheelColor, paintColor, interior, seat) VALUES (?, '#5C5C5C' ,'#FFFFFF', 'Wood', 'Cloth');"
-    db.query(sqlInsert, [ownerName], (err, result) => {
+
+    const sqlInsert = "INSERT INTO carlist(ownerName, wheelColor, paintColor, interior, seat) VALUES (?, ? ,?, ?, ?);"
+    db.query(sqlInsert, [ownerName, wheelColor, paintColor, interior, seat], (err, result) => {
         console.log(result);
     });
 });
 
 app.listen(3001, () => {
-    console.log("running lol");
+    console.log("Server Running");
+
+    const sqlInsert = "TRUNCATE TABLE carlist;"
+    db.query(sqlInsert, (err, result) => {
+        console.log(result);
+    });
 });
