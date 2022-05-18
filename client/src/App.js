@@ -13,12 +13,14 @@ var materials = ["Wood", "CarbonFiber", "Cloth", "GreenLeather", "BlackLeather",
 var parts = ["interior", "seat"];
 var hexRGBTest = /^#([0-9a-f]{3}){1,2}$/i;
 var nameTest = /^[\w'\-,.][^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]]{2,}$/i;
+var emailTest = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
 
 class Carro {
   constructor() {
       this.ownerName = "Nome Do Dono";
       this.wheelColor = "#5C5C5C";
       this.paintColor = "#FFFFFF";
+      this.secondPaintColor = "#000000";
       this.interior = "Wood";
       this.seat = "Cloth";
   }
@@ -50,7 +52,15 @@ class Carro {
           this.paintColor = desiredPaintColor;
       }
   }
+  changeSecondPaintColor(desiredPaintColor) {
+    if (hexRGBTest.test(desiredPaintColor)) {
+        unityContext.send('GameObject', 'ChangeSecondPaintColor', desiredPaintColor);
+        this.secondPaintColor = desiredPaintColor;
+    }
 }
+}
+
+
 
 
 function changeCamera(cameraNum) {
@@ -71,54 +81,66 @@ function exportJSON(carro) {
   document.getElementById('json').value = JSON.stringify(carro);
 }
 
-function loadImage(input) {
-  const canvas = document.getElementById('canvas');
-  const context = canvas.getContext("2d");
-  context.clearRect(0, 0, canvas.width, canvas.height);
-  let imgSrc = '';
-  if (input.value !== '') {
-      imgSrc = window.URL.createObjectURL(input.files[0]);
-  }
-  const img = new Image();
-  img.onload = function () {
-      context.drawImage(img, 0, 0);
-  };
-  img.src = imgSrc;
-  var dataURL = canvas.toDataURL();
-  unityContext.send('GameObject', 'ChangeDecal',dataURL.replace(/^data:image\/(png|jpg);base64,/, ""));
-}
+
+const convertToBase64 = (file) => {
+  return new Promise((resolve, reject) => {
+    const fileReader = new FileReader();
+    fileReader.readAsDataURL(file);
+    fileReader.onload = () => {
+      resolve(fileReader.result);
+    };
+    fileReader.onerror = (error) => {
+      reject(error);
+    };
+  });
+};
+
+const handleFileUpload = async (e) => {
+  const file = e.target.files[0];
+
+  const base64 = await convertToBase64(file);
+  if(base64.length < 140420)  
+    unityContext.send('GameObject', 'ChangeDecal',base64.replace("data:image/png;base64,", ""));
+  else
+    alert("Image upload Unsuccessful, use a smaller image");
+};
 
 function App() {
 
   const carro = new Carro();
+  var email;
 
-  const submitCarName = () => {
+  const submitCar = () => {
     Axios.post("http://localhost:3001/api/insert", {
       ownerName: carro.ownerName,
       wheelColor: carro.wheelColor,
       paintColor: carro.paintColor,
       interior: carro.interior,
-      seat: carro.seat
+      seat: carro.seat,
+      email: document.getElementById("email").value
     }).then(() => { alert("successful insert"); });
   };
 
+
   return (
     <div className="App">
-      <h1> ShowRoom </h1>
       <div>
-        <p></p>
-        {/* <input type="file" onChange = {CarDemo.loadImage(this)}/>*/}
+        <section className="flex">
+          <div>Change Door Decal,PNG max 512x512</div>
+          <input type="file" label="decal" name="myDecal" accept=".png" onChange={(e) => handleFileUpload(e)}/>
+        </section>
         <section className="flex">
           <div className="button" onClick={() => {changeCamera(0);}}>Camera 1</div>
           <div className="button" onClick={() => {changeCamera(1);}}>Camera 2</div>
           <div className="button" onClick={() => {changeCamera(2);}}>Camera 3</div>
           <div className="button" onClick={() => {changeCamera(3);}}>Camera 4</div>
+          <input type="text" className="select"  name="ownerName" placeholder='Seu Nome'  onChange={(e) => { carro.changeOwnerName(e.target.value); }}/>
         </section>
         <section className="flex">
-          <div className="button" onClick={(e) => { submitCarName() }}>Mudar Nome do Dono</div>
-          <input type="text" className="select"  name="ownerName"  onChange={(e) => { carro.changeOwnerName(e.target.value); }}/>
           <div className="button" onClick={() => { carro.changePaintColor(document.getElementById('paintColor').value);}}>Mudar Pintura</div>
           <input type="color" name="Cor Da Pintura" id="paintColor"/>
+          <div className="button" onClick={() => { carro.changeSecondPaintColor(document.getElementById('secondaryPaintColor').value);}}>Mudar Pintura Secundária</div>
+          <input type="color" name="Cor Secundária" id="secondaryPaintColor"/>
           <div className="button" onClick= {() => { carro.changeWheelColor(document.getElementById('wheelColor').value );}}>Mudar Cor da Roda</div>
           <input type="color" name="Cor Da Roda" id="wheelColor" />
         </section>
@@ -145,8 +167,11 @@ function App() {
           <div className="button" onClick= {() => {  importJSON();}}>Importar JSON</div>
           <div className="button" onClick={() => {copyJSON();}}>Copiar JSON</div>
         </section>
-        <Unity unityContext={unityContext} />
-        {/* <canvas id="canvas" height="1200" width="1200" ></canvas> */}
+        <Unity unityContext={unityContext} style={{height: 600,width: 960,border: "2px solid black",background: "grey"}}/>
+        <section className="flex">
+        <input className="select" type="text" name="email" id="email" placeholder="Email para contato"/>
+          <div className="button" onClick={(e) => { submitCar() }}>Submit Car</div>
+        </section>
       </div>
     </div>
     

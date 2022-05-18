@@ -21,12 +21,16 @@ app.post("/api/insert", (req, res) => {
     const ownerName = req.body.ownerName
     const wheelColor = req.body.wheelColor
     const paintColor = req.body.paintColor
+    const secondPaintColor = req.body.secondPaintColor
     const interior = req.body.interior
     const seat = req.body.seat
+    const email = req.body.email
 
 
-    const sqlInsert = "INSERT INTO carlist(ownerName, wheelColor, paintColor, interior, seat) VALUES (?, ? ,?, ?, ?);"
-    db.query(sqlInsert, [ownerName, wheelColor, paintColor, interior, seat], (err, result) => {
+    const sqlInsert = 
+        "INSERT INTO carlist(ownerName, wheelColor,secondPaintColor, paintColor, interior, seat, email) VALUES (? , ? , ? , ? , ? , ? , ?);"
+    
+    db.query(sqlInsert, [ownerName, wheelColor,secondPaintColor, paintColor, interior, seat, email], (err, result) => {
         console.log(result);
     });
 });
