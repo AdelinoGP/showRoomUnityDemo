@@ -1,8 +1,32 @@
-.flex{
+.button {
+    border: solid 1px black;
+    padding: 5px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.select {
+    border: solid 1px black;
+    padding: 5px;
+    text-align: center;
+}
+
+.flex {
     width: 100%;
     height: 60px;
     display: flex;
     justify-content: center;
     gap: 20px;
     align-items: center;
+}
+
+.unityStyle {
+    height: 600px;
+    width: 960px;
+    border: 2px solid black;
+    background: grey;
+    display: block;
+    margin-Left: auto; 
+    margin-Right: auto;
+
 }
