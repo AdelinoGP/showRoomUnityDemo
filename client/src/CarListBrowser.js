@@ -8,13 +8,8 @@ function CarListBrowser(props) {
     let [carList, setCarList] = useState([]);
 
     function changeCamera(cameraNum) {
-        if (cameraNum >= 0 && cameraNum <= 4) props.unityContext.send('GameObject', 'ChangeCamera', cameraNum);
-    }
-
-    function importJSON() {
-        var exportedJSON = document.getElementById("json").value;
-
-        props.unityContext.send('GameObject', 'CopyFromJSON', exportedJSON);
+        if (cameraNum >= 0 && cameraNum <= 4)
+            props.unityContext.send('GameObject', 'ChangeCamera', cameraNum);
     }
 
     useEffect(() => {
@@ -23,27 +18,60 @@ function CarListBrowser(props) {
         })
     });
 
+    function renderCarList(){
+        return carList.map((val) => {
+            return (
+                <tr key={val.carId} className='button' onClick={() => {
+                    let stringableVal = val;
+                    delete stringableVal.carId;
+                    delete stringableVal.ownerName;
+                    delete stringableVal.email;
+                    props.unityContext.send('GameObject', 'CopyFromJSON', JSON.stringify(stringableVal));
+                }}>
+                    <th>{val.ownerName}</th>
+                    <th>{val.email} </th>
+                    <th>{val.wheelColor}</th>
+                    <th>{val.paintColor}</th>
+                    <th>{val.secondaryPaintColor}</th>
+                    <th>{val.interior}</th>
+                    <th>{val.seat}</th>
+                    <th>{val.decal.length === [] ? "empty" : "Not Empty"}</th>
+                </tr>
+            )
+        })
+    }
+
     if (shouldRender === false)
         return null;
     return (
-        <div>
-            {carList.map((val) => {
+        <div className='carListBrowser'>
+            <section className="flex">
+                <div className="button" onClick={() => { changeCamera(0); }}>Camera 1</div>
+                <div className="button" onClick={() => { changeCamera(1); }}>Camera 2</div>
+                <div className="button" onClick={() => { changeCamera(2); }}>Camera 3</div>
+                <div className="button" onClick={() => { changeCamera(3); }}>Camera 4</div>
+            </section>
+            <div className='table-wrapper'>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>E-MaiL</th>
+                            <th>Wheel Color</th>
+                            <th>Paint Color</th>
+                            <th>Secondary Paint Color</th>
+                            <th>Interior</th>
+                            <th>Seat</th>
+                            <th>HasDecal</th>
+                        </tr>
+                    </thead>
 
-                return (
-                    <div key={val.carId} className='button' onClick={() => {
-                        let stringableVal = val;
-                        delete stringableVal.carId;
-                        delete stringableVal.ownerName;
-                        delete stringableVal.email;
-                        // if (stringableVal.decal !== null)
-                        //     stringableVal.decal = stringableVal.decal.data.toString();
-                        console.log(JSON.stringify(stringableVal));
-                        props.unityContext.send('GameObject', 'CopyFromJSON', JSON.stringify(stringableVal));
-                        }}>
-                        Owner Name: {val.ownerName} |  E-Mail: {val.email} |  Wheel Color: {val.wheelColor} |  Paint Color: {val.paintColor} |  Secondary Paint Color: {val.secondaryPaintColor} |  Interior: {val.interior} |  Seat: {val.seat} |  Decal: {val.decal.data === []? "empty" : "Not Empty"}
-                    </div>
-                )
-            })}
+                    <tbody>
+                        {(Array.isArray(carList) && carList.length > 0) ? renderCarList() : '' }
+                    </tbody>
+
+                </table>
+            </div>
         </div>
     )
 }

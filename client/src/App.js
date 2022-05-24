@@ -5,19 +5,17 @@ import Unity, { UnityContext } from "react-unity-webgl";
 
 import './App.css';
 
+const unityContext = new UnityContext({
+  loaderUrl: "./build/WebGL.loader.js",
+  dataUrl: "./build/WebGL.data",
+  frameworkUrl: "./build/WebGL.framework.js",
+  codeUrl: "./build/WebGL.wasm",
+});
 
 
 function App() {
 
   let [renderEditor, setRenderEditor] = useState(false);
-
-
-  const unityContext = new UnityContext({
-    loaderUrl: "./build/WebGL.loader.js",
-    dataUrl: "./build/WebGL.data",
-    frameworkUrl: "./build/WebGL.framework.js",
-    codeUrl: "./build/WebGL.wasm",
-  });
 
   function resetCarModel() {
     unityContext.send('GameObject', 'CopyFromJSON', '{"wheelColor":"#5C5C5C","paintColor":"#FFFFFF","secondaryPaintColor":"#000001","interior":"Wood","seat":"Cloth","decal":""}')
@@ -26,13 +24,13 @@ function App() {
 
   function changeView(){
     setRenderEditor(!renderEditor);
-    //resetCarModel();
+    resetCarModel();
     
   }
 
   return (
     <div>
-      <div className="button" onClick={() => {changeView() }}>
+      <div className="button listOrEditor" onClick={() => {changeView() }}>
         Trocar entre Editor e Manager
       </div>
 

@@ -127,10 +127,11 @@ function MyEditor(props) {
                         <input type="file" label="decal" name="myDecal" accept=".png" onChange={(e) => changeDecal(e)} />
                     </section>
                     <section className="flex">
-                        <div className="button" onClick={() => { changeCamera(0); }}>Camera 1</div>
-                        <div className="button" onClick={() => { changeCamera(1); }}>Camera 2</div>
-                        <div className="button" onClick={() => { changeCamera(2); }}>Camera 3</div>
-                        <div className="button" onClick={() => { changeCamera(3); }}>Camera 4</div>
+                        <div className="button" onClick={() => { changeCamera(0) }}>Camera 1</div>
+                        <div className="button" onClick={() => { changeCamera(1) }}>Camera 2</div>
+                        <div className="button" onClick={() => { changeCamera(2) }}>Camera 3</div>
+                        <div className="button" onClick={() => { changeCamera(3) }}>Camera 4</div>
+                        <div className="button" onClick={() => { console.log("teste") }}>Camera 1</div>
                     </section>
                     <section className="flex">
                         <div className="button" onClick={() => { changePaintColor(document.getElementById('paintColor').value); }}>Mudar Pintura</div>
